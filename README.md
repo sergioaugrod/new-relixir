@@ -42,7 +42,8 @@ Phoenix application named `MyApp`.
 
     config :new_relixir,
       application_name: System.get_env("NEWRELIC_APP_NAME"),
-      license_key: System.get_env("NEWRELIC_LICENSE_KEY")
+      license_key: System.get_env("NEWRELIC_LICENSE_KEY"),
+      http_proxy: System.get_env("NEWRELIC_HTTP_PROXY") # optional
     ```
 
 3.  Add `NewRelixir.Instrumenters.Phoenix` to the list of instrumenters in your `Endpoint`

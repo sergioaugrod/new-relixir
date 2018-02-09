@@ -20,7 +20,6 @@ defmodule NewRelixir.Agent do
     end
   end
 
-
   ## NewRelixir protocol
 
   def get_redirect_host() do
@@ -108,17 +107,27 @@ defmodule NewRelixir.Agent do
     :erlang.list_to_integer(char_list)
   end
 
-  defp app_name() do
-    Application.get_env(:new_relixir, :application_name)
-  end
+  defp app_name, do: Application.get_env(:new_relixir, :application_name)
 
-  defp license_key() do
-    Application.get_env(:new_relixir, :license_key)
+  defp license_key, do: Application.get_env(:new_relixir, :license_key)
+
+  defp http_proxy, do: Application.get_env(:new_relixir, :http_proxy)
+
+  defp headers, do: [{'Content-Encoding', 'identity'}]
+
+  def options do
+    default_options = [:with_body]
+    proxy = http_proxy()
+
+    if proxy do
+      [{:proxy, proxy} | default_options]
+    else
+      default_options
+    end
   end
 
   def request(url, body \\ "[]") do
-    headers = [{'Content-Encoding', 'identity'}]
-    case :hackney.post(url, headers, body, [:with_body]) do
+    case :hackney.post(url, headers(), body, options()) do
       {:ok, status, _, body} -> {:ok, status, body}
       error -> error
     end
@@ -144,5 +153,4 @@ defmodule NewRelixir.Agent do
   end
 
   defp url_var({key, value}), do: [to_string(key), "=", to_string(value)]
-
 end
